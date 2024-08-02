@@ -1,0 +1,88 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/]
+
+scalar Time
+
+
+# An Event Entity that represents single Event
+type Event {
+    id: String! # an uuid external event ID
+    user: String!
+    name: String!
+    description: String
+    capacity: Int! # how many participants can join the event
+    duration: Int! # given as number of days
+    startDate: Time!
+    endDate: Time!
+    registrationStartDate: Time!
+    registrationEndDate: Time!
+    latitude: Float!
+    longitude: Float!
+    public: Boolean!
+    participants: [Participant]
+}
+
+type Participant {
+    user: String!
+}
+
+input Location{
+    latitude: Float
+    longitude: Float
+    distance: Int
+}
+
+input Upcoming{
+    date: Time
+    duration: Int
+}
+
+type Query {
+    events(user: String, name: String, public: Boolean, location: Location, upcoming: Upcoming): [Event!]!
+    event(id: ID): Event!
+}
+
+input NewEvent {
+    user: String! #is an uuid
+    name: String!
+    description: String
+    capacity: Int! # number of spots available for the event
+    latitude: Float!
+    longitude: Float!
+    duration: Int! # given as number of days
+    startDate: Time!
+    registrationEndDate: Time
+    public: Boolean!
+}
+
+input Period{
+    start: Time!
+    end: Time!
+}
+
+input UpdateEvent {
+    id: String! #is an uuid
+    name: String
+    description: String
+    capacity: Int # number of spots available for the event
+    latitude: Float
+    longitude: Float
+    eventDate: Period
+    registrationDate: Period
+    public: Boolean
+}
+
+input Invitation {
+    user: String!
+    event: String!
+}
+
+type Mutation {
+    createEvent(input: NewEvent!): Event!
+    updateEvent(input: UpdateEvent!): Event!
+    joinEvent(input: Invitation!): Boolean!
+    inviteParticipant(input: Invitation!): Boolean!
+    acceptParticipant(input: Invitation!): Boolean!
+    removeParticipant(input: Invitation!): Boolean!
+}
